@@ -59,7 +59,7 @@ model Category {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   thumbnail String
-  parentId  String?  @db.ObjectId
+  brands    String[] @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -67,11 +67,12 @@ model Category {
 }
 
 model Brand {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  thumbnail String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  thumbnail  String
+  categories String[] @db.ObjectId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("brands")
 }
