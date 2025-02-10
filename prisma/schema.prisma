@@ -21,58 +21,74 @@ model User {
 }
 
 model Product {
-  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
   name             String
   shortDescription String
   description      String?
-  brandId          String    @db.ObjectId
-  categoryId       String    @db.ObjectId
+  thumbnail        String
+  warranty         String
   images           String[]
-  hasVariant       Boolean   @default(false)
-  price            Float
-  extendedPrice    Float?
-  stock            Int       @default(0)
-  variants         Variant[] @relation("ProductVariants")
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  hasVariant       Boolean  @default(false)
+
+  // pre-order or TBA if price is 0
+  price         Float @default(0)
+  extendedPrice Float @default(0)
+
+  // out of stock if stock is 0
+  stock          Int       @default(0)
+  isActive       Boolean   @default(false)
+  isFeatured     Boolean   @default(false)
+  isFreeShipping Boolean   @default(false)
+  variants       Variant[] @relation("ProductVariants")
+  brandId        String    @db.ObjectId
+  categoryId     String    @db.ObjectId
+  brand          Brand     @relation(fields: [brandId], references: [id])
+  category       Category  @relation(fields: [categoryId], references: [id])
+  seo            Json
+  meta           Json
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@map("products")
 }
 
 model Variant {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  attributes    Json
-  thumbnail     String
-  price         Float
-  extendedPrice Float?
-  stock         Int      @default(0)
-  productId     String   @db.ObjectId
-  product       Product  @relation("ProductVariants", fields: [productId], references: [id], onDelete: Cascade)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  attributes Json
+  thumbnail  String
+
+  // pre-order or TBA if price is 0
+  price         Float @default(0)
+  extendedPrice Float @default(0)
+
+  // out of stock if stock is 0
+  stock     Int      @default(0)
+  productId String   @db.ObjectId
+  isActive  Boolean  @default(false)
+  product   Product  @relation("ProductVariants", fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("variants")
 }
 
 model Category {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   thumbnail String
-  brands    String[] @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  brands    String[]  @db.ObjectId
+  Product   Product[]
 
   @@map("categories")
 }
 
 model Brand {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   thumbnail  String
-  categories String[] @db.ObjectId
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  categories String[]  @db.ObjectId
+  Product    Product[]
 
   @@map("brands")
 }
